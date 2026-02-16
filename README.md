@@ -1,4 +1,4 @@
-# 💳 Simulador de Pago Bancario - Payment Simulator hola
+# 💳 Simulador de Pago Bancario - Payment Simulator
 
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple)](https://getbootstrap.com)
