@@ -8,8 +8,32 @@ Un simulador completo de pasarelas de pago bancarias para desarrollo y testing. 
 
 ---
 
+## 🎨 Diseño Visual (v1.1)
+
+El proyecto fue actualizado con un diseño moderno y profesional inspirado en las mejores prácticas de UI/UX fintech. Los principales cambios son:
+
+- **Sistema de diseño modular** (`css/modern-style.css`): Variables CSS para colores, tipografía, sombras y gradientes. Fácil personalización y mantenimiento.
+- **Paleta de colores moderna**: Indigo (`#4f46e5`) como color principal, con acentos en esmeralda, rojo y ámbar para los distintos estados.
+- **Tipografía Inter**: Fuente sans-serif moderna de alta legibilidad, cargada desde Google Fonts.
+- **Tarjetas de método de pago rediseñadas**: Estado seleccionado con fondo degradado, bordes y sombras con color primario.
+- **Tarjetas de escenario diferenciadas**: Cada escenario (Aprobado, Rechazado, Pendiente…) tiene su propio color de borde, fondo y botón para identificación visual inmediata.
+- **Página de resultado mejorada**: Hero con gradiente según el estado del pago, tabla de detalles con separadores, y visor JSON de tema oscuro.
+- **Página de checkout rediseñada**: Spinner de carga moderno sobre fondo degradado, con información clara de la transacción.
+- **Animaciones de entrada**: `fadeInUp`, `scaleIn` y `pulse` para una experiencia de usuario más fluida.
+- **Botones con gradiente**: Todos los botones de acción tienen gradientes y sombras coloreadas que refuerzan la identidad visual.
+
+| Página | Antes | Después |
+|--------|-------|---------|
+| `index.php` | Bootstrap básico, botones azules planos | Cards modernas, íconos de producto, trust badges, payment labels con estado seleccionado destacado |
+| `simulator.php` | Cards grises, cabecera plana | Header degradado por proveedor, scenario cards con color propio, badge de entorno |
+| `callback.php` | Header con `bg-success/danger` plano | Hero con gradiente, tabla de detalles tipo fintech, JSON viewer dark-mode |
+| `checkout.php` | Spinner básico | Spinner elegante, card centrada con información de la transacción |
+
+---
+
 ## 📋 Tabla de Contenidos
 
+- [Diseño Visual](#-diseño-visual-v11)
 - [Características](#-características)
 - [Medios de Pago Soportados](#-medios-de-pago-soportados)
 - [Requisitos](#-requisitos)
@@ -34,7 +58,7 @@ Un simulador completo de pasarelas de pago bancarias para desarrollo y testing. 
 ✅ **Múltiples métodos de pago**: Webpay, Mercado Pago, PayPal, Transferencias  
 ✅ **Respuestas exactas** como las APIs reales (JSON, códigos de estado, etc.)  
 ✅ **6 escenarios de prueba**: Aprobado, Rechazado, Pendiente, Cancelado, Error, Timeout  
-✅ **Interfaz profesional** con Bootstrap 5.3  
+✅ **Diseño moderno y profesional** — Sistema de diseño CSS modular con Inter font  
 ✅ **Sin base de datos** - Todo en sesiones (fácil de implementar)  
 ✅ **Autocontenido** - No requiere dependencias externas  
 ✅ **Documentación completa** - Comentarios en código y README detallado  
@@ -150,7 +174,16 @@ Edita [index.php](index.php#L66) para cambiar el monto o descripción:
 
 ### 3. Estilos Personalizados
 
-Edita [css/bank-style.css](css/bank-style.css) para personalizar colores y diseño.
+El sistema de estilos está en `css/modern-style.css`. Utiliza variables CSS para personalizar fácilmente la paleta, tipografía y componentes:
+
+```css
+:root {
+  --color-primary: #4f46e5;   /* Color principal (Indigo) */
+  --color-success: #10b981;   /* Verde éxito (Emerald)  */
+  --color-danger:  #ef4444;   /* Rojo rechazo            */
+  --color-warning: #f59e0b;   /* Ámbar pendiente         */
+}
+```
 
 ---
 
@@ -210,7 +243,8 @@ bank_simulator/
 ├── callback.php              # Procesa respuesta y muestra resultado
 │
 ├── css/
-│   └── bank-style.css        # Estilos personalizados
+│   ├── bank-style.css        # Estilos legados (compatibilidad)
+│   └── modern-style.css      # Sistema de diseño moderno (v1.1)
 │
 ├── includes/
 │   └── sessions.php          # Funciones auxiliares y utilidades
