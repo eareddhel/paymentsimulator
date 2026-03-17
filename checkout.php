@@ -31,8 +31,65 @@ $transactionId = strtoupper(uniqid('TXN-'));
 $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
 $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 
-// Usar return_url enviada por la app; si no viene, volver al index del simulador
-$returnUrl = $_POST['return_url'] ?? ($baseUrl . '/index.php');
+// Validar return_url contra una lista blanca de hosts permitidos
+$defaultReturnUrl = $baseUrl . '/index.php';
+$rawReturnUrl = trim((string)($_POST['return_url'] ?? ''));
+
+$serverHost = strtolower((string)($_SERVER['HTTP_HOST'] ?? 'localhost'));
+$serverHost = preg_replace('/:\\d+$/', '', $serverHost);
+$allowedReturnHosts = [
+    $serverHost,
+    'localhost',
+    '127.0.0.1',
+    'domino9.regline.cl',
+];
+
+$extraAllowedHosts = trim((string)($_ENV['ALLOWED_RETURN_URL_HOSTS'] ?? ''));
+if ($extraAllowedHosts !== '') {
+    foreach (explode(',', $extraAllowedHosts) as $host) {
+        $host = strtolower(trim($host));
+        $host = preg_replace('/:\\d+$/', '', $host);
+        if ($host !== '') {
+            $allowedReturnHosts[] = $host;
+        }
+    }
+}
+
+$allowedReturnHosts = array_values(array_unique($allowedReturnHosts));
+$returnUrl = $defaultReturnUrl;
+
+if ($rawReturnUrl !== '') {
+    if (strpos($rawReturnUrl, '/') === 0) {
+        $returnUrl = $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $rawReturnUrl;
+    } else {
+        $parsedReturnUrl = parse_url($rawReturnUrl);
+        if (
+            is_array($parsedReturnUrl)
+            && isset($parsedReturnUrl['scheme'], $parsedReturnUrl['host'])
+        ) {
+            $scheme = strtolower((string)$parsedReturnUrl['scheme']);
+            $host = strtolower((string)$parsedReturnUrl['host']);
+            $host = preg_replace('/:\\d+$/', '', $host);
+
+            if (
+                in_array($scheme, ['http', 'https'], true)
+                && in_array($host, $allowedReturnHosts, true)
+            ) {
+                $returnUrl = $rawReturnUrl;
+            }
+        }
+    }
+}
+
+// Configurar redirección automática en callback (aprobados)
+$rawAutoRedirectOnApproved = $_POST['auto_redirect_on_approved'] ?? 'true';
+$autoRedirectOnApproved = filter_var($rawAutoRedirectOnApproved, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+if ($autoRedirectOnApproved === null) {
+    $autoRedirectOnApproved = true;
+}
+
+$redirectDelayMs = isset($_POST['redirect_delay_ms']) ? (int)$_POST['redirect_delay_ms'] : 2000;
+$redirectDelayMs = max(0, min($redirectDelayMs, 15000));
 
 // Guardar datos en sesión (en producción esto iría a base de datos)
 $_SESSION['pending_transaction'] = [
@@ -43,6 +100,8 @@ $_SESSION['pending_transaction'] = [
     'description' => $description,
     'timestamp' => time(),
     'return_url' => $returnUrl,
+    'auto_redirect_on_approved' => $autoRedirectOnApproved,
+    'redirect_delay_ms' => $redirectDelayMs,
 ];
 
 // Generar token de sesión seguro (en producción usarías un hash criptográfico)

@@ -89,6 +89,9 @@ $responses = [
 
 $response = $responses[$responseType] ?? $responses['approved'];
 $returnUrl = $pendingTransaction['return_url'] ?? 'index.php';
+$autoRedirectOnApproved = (bool)($pendingTransaction['auto_redirect_on_approved'] ?? true);
+$redirectDelayMs = (int)($pendingTransaction['redirect_delay_ms'] ?? 2000);
+$redirectDelayMs = max(0, min($redirectDelayMs, 15000));
 
 // Generar datos de transacción simulados (como los que devuelven las APIs reales)
 $transactionData = [
@@ -460,10 +463,10 @@ $jsonResponse = json_encode($transactionData, JSON_PRETTY_PRINT | JSON_UNESCAPED
             }
         }
 
-        <?php if ($responseType === 'approved'): ?>
+        <?php if ($responseType === 'approved' && $autoRedirectOnApproved): ?>
         setTimeout(() => {
             window.location.href = <?php echo json_encode($returnUrl); ?>;
-        }, 2000);
+        }, <?php echo $redirectDelayMs; ?>);
         <?php endif; ?>
     </script>
 </body>
