@@ -88,6 +88,7 @@ $responses = [
 ];
 
 $response = $responses[$responseType] ?? $responses['approved'];
+$returnUrl = $pendingTransaction['return_url'] ?? 'index.php';
 
 // Generar datos de transacción simulados (como los que devuelven las APIs reales)
 $transactionData = [
@@ -199,6 +200,8 @@ switch ($paymentMethod) {
 
 // Guardar resultado en sesión (en producción esto iría a base de datos)
 $_SESSION['last_transaction'] = $transactionData;
+
+$jsonResponse = json_encode($transactionData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -314,14 +317,17 @@ $_SESSION['last_transaction'] = $transactionData;
 
                 <!-- Respuesta JSON (Para desarrolladores) -->
                 <div class="card shadow-sm mb-4 no-print">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                         <h6 class="mb-0">
                             <i class="bi bi-code-square"></i> Respuesta JSON (Para desarrollo)
                         </h6>
+                        <button type="button" class="btn btn-sm btn-outline-light" id="copyJsonButton" onclick="copyJsonResponse()">
+                            <i class="bi bi-clipboard"></i> Copiar código
+                        </button>
                     </div>
                     <div class="card-body p-0">
                         <div class="json-viewer">
-                            <pre class="mb-0"><?php echo json_encode($transactionData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); ?></pre>
+                            <pre class="mb-0" id="jsonResponseContent"><?php echo $jsonResponse; ?></pre>
                         </div>
                     </div>
                     <div class="card-footer bg-light">
@@ -337,7 +343,7 @@ $_SESSION['last_transaction'] = $transactionData;
                     <div class="card-body">
                         <h6 class="mb-3"><i class="bi bi-ui-checks"></i> ¿Qué hacer ahora?</h6>
                         <div class="d-grid gap-2">
-                            <a href="index.php" class="btn btn-primary btn-lg">
+                            <a href="<?php echo htmlspecialchars($returnUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary btn-lg">
                                 <i class="bi bi-arrow-left-circle"></i> Volver a la Tienda
                             </a>
                             <button onclick="window.print()" class="btn btn-outline-secondary no-print">
@@ -395,5 +401,70 @@ $_SESSION['last_transaction'] = $transactionData;
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copyJsonResponse() {
+            const copyButton = document.getElementById('copyJsonButton');
+            const originalButtonHtml = copyButton.innerHTML;
+            const jsonText = <?php echo json_encode($jsonResponse); ?>;
+
+            function showSuccess() {
+                copyButton.innerHTML = '<i class="bi bi-check2"></i> Copiado';
+                copyButton.classList.remove('btn-outline-light');
+                copyButton.classList.add('btn-success');
+
+                setTimeout(() => {
+                    copyButton.innerHTML = originalButtonHtml;
+                    copyButton.classList.remove('btn-success');
+                    copyButton.classList.add('btn-outline-light');
+                }, 1800);
+            }
+
+            function showError() {
+                copyButton.innerHTML = '<i class="bi bi-exclamation-triangle"></i> No se pudo copiar';
+
+                setTimeout(() => {
+                    copyButton.innerHTML = originalButtonHtml;
+                }, 1800);
+            }
+
+            function copyWithFallback() {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = jsonText;
+                tempTextArea.setAttribute('readonly', '');
+                tempTextArea.style.position = 'fixed';
+                tempTextArea.style.left = '-9999px';
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                tempTextArea.setSelectionRange(0, tempTextArea.value.length);
+
+                try {
+                    const copied = document.execCommand('copy');
+                    document.body.removeChild(tempTextArea);
+                    if (copied) {
+                        showSuccess();
+                    } else {
+                        showError();
+                    }
+                } catch (error) {
+                    document.body.removeChild(tempTextArea);
+                    showError();
+                }
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(jsonText)
+                    .then(showSuccess)
+                    .catch(copyWithFallback);
+            } else {
+                copyWithFallback();
+            }
+        }
+
+        <?php if ($responseType === 'approved'): ?>
+        setTimeout(() => {
+            window.location.href = <?php echo json_encode($returnUrl); ?>;
+        }, 2000);
+        <?php endif; ?>
+    </script>
 </body>
 </html>
