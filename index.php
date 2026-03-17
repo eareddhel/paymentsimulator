@@ -89,7 +89,7 @@ session_start();
                                                 <br>
                                                 <small class="text-muted ms-5">Transbank Chile - Tarjetas de crédito y débito</small>
                                             </div>
-                                            <img src="https://www.transbank.cl/public/img/Logo_Webpay.svg" alt="Webpay" style="height: 30px;">
+                                            <img src="/img/webpay.png" alt="Webpay" style="height: 30px;">
                                         </div>
                                     </label>
                                 </div>
