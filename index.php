@@ -89,7 +89,7 @@ session_start();
                                                 <br>
                                                 <small class="text-muted ms-5">Transbank Chile - Tarjetas de crédito y débito</small>
                                             </div>
-                                            <img src="/img/webpay.png" alt="Webpay" style="height: 30px;">
+                                            <img src="/img/webpay.png" alt="Webpay" style="height: 40px;">
                                         </div>
                                     </label>
                                 </div>
@@ -105,7 +105,8 @@ session_start();
                                                 <br>
                                                 <small class="text-muted ms-5">Tarjetas, efectivo y más opciones</small>
                                             </div>
-                                            <span class="badge bg-info">Popular</span>
+                                             <span class="badge bg-info">Popular</span>
+                                            <img src="/img/mercado-pago.png" alt="Mercado Pago" style="height: 60px;">
                                         </div>
                                     </label>
                                 </div>
@@ -121,7 +122,7 @@ session_start();
                                                 <br>
                                                 <small class="text-muted ms-5">Paga con tu cuenta PayPal</small>
                                             </div>
-                                            <i class="bi bi-globe text-primary fs-4"></i>
+                                            <img src="/img/paypal.png" alt="PayPal" style="height: 30px;">
                                         </div>
                                     </label>
                                 </div>
@@ -137,6 +138,7 @@ session_start();
                                                 <br>
                                                 <small class="text-muted ms-5">Transferencia manual o automática</small>
                                             </div>
+                                            <img src="/img/transferencia.png" alt="Transferencia Bancaria" style="height: 50px;">
                                         </div>
                                     </label>
                                 </div>
