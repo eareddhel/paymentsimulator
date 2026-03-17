@@ -31,6 +31,9 @@ $transactionId = strtoupper(uniqid('TXN-'));
 $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
 $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 
+// Usar return_url enviada por la app; si no viene, volver al index del simulador
+$returnUrl = $_POST['return_url'] ?? ($baseUrl . '/index.php');
+
 // Guardar datos en sesión (en producción esto iría a base de datos)
 $_SESSION['pending_transaction'] = [
     'transaction_id' => $transactionId,
@@ -39,7 +42,7 @@ $_SESSION['pending_transaction'] = [
     'order_id' => $orderId,
     'description' => $description,
     'timestamp' => time(),
-    'return_url' => $baseUrl . '/index.php',
+    'return_url' => $returnUrl,
 ];
 
 // Generar token de sesión seguro (en producción usarías un hash criptográfico)
