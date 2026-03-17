@@ -14,7 +14,7 @@
 define('DEBUG_MODE', true);
 
 // URL Base del proyecto (se detecta automáticamente, pero puedes forzarla)
-define('BASE_URL', 'http://localhost/bank_simulator');
+define('BASE_URL', 'http://localhost/paymentsimulator');
 
 // Tiempo de expiración de sesión (en segundos)
 define('SESSION_TIMEOUT', 3600); // 1 hora

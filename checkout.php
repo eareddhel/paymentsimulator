@@ -27,6 +27,10 @@ $description = $_POST['description'] ?? 'Compra en tienda';
 // Generar un ID de transacción único
 $transactionId = strtoupper(uniqid('TXN-'));
 
+// Detectar la URL base del proyecto dinámicamente
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+$baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+
 // Guardar datos en sesión (en producción esto iría a base de datos)
 $_SESSION['pending_transaction'] = [
     'transaction_id' => $transactionId,
@@ -35,7 +39,7 @@ $_SESSION['pending_transaction'] = [
     'order_id' => $orderId,
     'description' => $description,
     'timestamp' => time(),
-    'return_url' => 'http://localhost/bank_simulator/callback.php', // Tu URL real aquí
+    'return_url' => $baseUrl . '/index.php',
 ];
 
 // Generar token de sesión seguro (en producción usarías un hash criptográfico)
